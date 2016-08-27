@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hcm.core.orders.mapper.CustomerMapper">
+    <resultMap id="BaseResultMap" type="hcm.core.orders.dto.Customers">
+        <result column="CUSTOMER_ID" property="customerId" jdbcType="DECIMAL"/>
+        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR"/>
+        <result column="CUSTOMER_NUMBER" property="customerNumber" jdbcType="VARCHAR"/>
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+    </resultMap>
+	
+	<select id="selectAllCustomers" parameterType="hcm.core.orders.dto.Customers" resultMap="BaseResultMap">
+			select * from hap_ar_customers  c
+			<where>
+			<if test="customerId!= null">
+                and c.CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
+            </if>
+        	<if test="companyId!= null">
+                and c.company_id = #{companyId,jdbcType=DECIMAL}
+            </if>
+            <if test="customerName!= null">
+                and c.CUSTOMER_NAME = #{customerName,jdbcType=VARCHAR}
+            </if>
+            <if test="customerNumber!= null">
+                and c.CUSTOMER_NUMBER = #{customerNumber,jdbcType=VARCHAR}
+            </if>
+            </where>
+    </select>
+   
+</mapper>

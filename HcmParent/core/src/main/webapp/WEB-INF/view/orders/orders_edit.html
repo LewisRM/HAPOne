@@ -1,0 +1,592 @@
+<#-- 
+ * description: 快速编码界面
+ * version: 1.0 
+ * author:njq.niu@hand-china.com
+ * #{copyright}#
+ * 
+-->
+<#include "../include/head.html">
+<body style="padding: 15px">
+
+ <script>  
+        var navtab;  
+        $(function ()  
+        {  
+            navtab = $("#navtab3").ligerTab({  
+                showSwitch: true  
+            });  
+  
+        });  
+  
+</script>  	
+    
+    
+    
+<form id="mainform" method="post" enctype="application/json;charset=UTF-8"></form>	
+		
+<div id="navtab3" style="width: 1050px;overflow:hidden; border:1px solid #A3C0E8; margin-top:6px;">  
+        
+        <div  title="test1" showClose="true">  
+            <div id="Div1" style="margin:10px; height:180px; width:1000px">  
+            <div id="codeValueGrid" style="margin-left: 2px; margin-top: 2px;"></div>
+            </div>
+        </div>  
+        <div  title="test2" showClose="true">  
+            <div id="Div2" style="margin:10px; height:180px;  width:1000px">
+             <div id="codeValueGridTwo" style="margin-left: 2px; margin-top: 2px;"></div>
+             </div>
+        </div>
+</div> 
+
+
+	
+	
+<script type="text/javascript">
+	    var numbers=0;
+	    var headerId=Date.parse(new Date());
+	    
+        function f_save() {
+            Hap.submitForm({
+                form:form,
+                grid:codeValueGrid,
+                gridName:'codeValues',          
+                url:'${base.contextPath}/orders/order/insert',             
+                success:function(json,opt){
+                    $.ligerDialog.success("<@spring.message "hap.tip.success"/>", '<@spring.message "hap.tip.info"/>', function(){
+                        parent.ordersGrid.reload();
+                        f_cancel();
+                    });
+                    
+                }
+            });
+        }
+        function f_cancel() {
+            var dialog = frameElement.dialog;
+            dialog.close();       
+        }
+        
+        
+        <#assign isedit = (RequestParameters.isedit!'0')/>        
+        //表单底部按钮 
+        Hap.setFormDefaultBtn(f_cancel, f_save);
+    
+        
+        
+        var mainform = $("#mainform");
+        var form  = mainform.ligerForm({
+            inputWidth : 280,
+            fields : [{
+                name:'headerId',
+                type:'hidden'
+                
+            },{
+                display : '<@spring.message "orders.orderNumber"/>',
+                name : "orderNumber",
+                type : "text",
+                width:150,
+                validate : {
+                    required : true
+                }
+            },{
+            	type : "popup", 
+                label : '<@spring.message "orders.companyId"/>',
+                name : 'companyId',
+                textField:'companyName', 
+                
+                
+                options:{
+                    readonly:false,//是否可编辑
+                    valueField : 'companyId',//选中的valueField
+                    textField : 'companyName',//选中的textField 
+                    grid : {
+                        columns : [ {
+                            display :'<@spring.message "orders.companyNumber"/>',
+                            name : "companyNumber",
+                            width : 200,
+                            type : "text",
+                            align : "left"
+                        }, {
+                            display : '<@spring.message "orders.companyName"/>',
+                            name : "companyName",
+                            width : 300,
+                            type : "text",
+                            align : "left"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/orders/company/query' 
+                    },
+                    //lov上的查询条件
+                    condition : {
+                        inputWidth : 100,
+                        labelWidth : 150,
+                        fields : [ {
+                        	display : '<@spring.message "orders.companyNumber"/>',
+                            name : "companyNumber",
+                            newline : true,
+                            type : "text"
+                        }, {
+                        	display :  '<@spring.message "orders.companyName"/>',
+                            name : "companyName",
+                            newline : true,
+                            type : "text"
+                        } ]
+                    }
+                },
+                               
+                newline : false,
+                width:150,
+                validate : {
+                    required : true
+                }
+            }
+            ,{
+            	type : "popup", 
+                label : '<@spring.message "orders.customerName"/>',
+                name : 'customerId',
+                textField:'customerName', 
+                
+                
+                options:{
+                    readonly:false,//是否可编辑
+                    valueField : 'customerId',//选中的valueField
+                    textField : 'customerName',//选中的textField 
+                   
+                    grid : {
+                        columns : [ {
+                            display :'<@spring.message "orders.customerNumber"/>',
+                            name : "customerNumber",
+                            width : 200,
+                            type : "text",
+                            align : "left"
+                        }, {
+                            display : '<@spring.message "orders.customerName"/>',
+                            name : "customerName",
+                            width : 300,
+                            type : "text",
+                            align : "left"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/orders/customer/query'
+                    },
+                    //lov上的查询条件
+                    condition : {
+                        inputWidth : 100,
+                        labelWidth : 150,
+                        fields : [ {
+                        	display : '<@spring.message "orders.customerNumber"/>',
+                            name : "customerNumber",
+                            newline : true,
+                            type : "text"
+                        }, {
+                        	display :  '<@spring.message "orders.customerName"/>',
+                            name : "customerName",
+                            newline : true,
+                            type : "text"
+                        } ]
+                    }
+                
+                    ,
+                    onLoadData: function() {
+                        //设置参数
+                        this.setParm('companyId', $.ligerui.get('companyId').getValue())
+                    	
+                    }
+            },
+                               
+                newline : false,
+                width:150,
+                validate : {
+                    required : true
+                }
+            },{
+                type      : 'date',
+                label     : '<@spring.message "orders.orderDate"/>',
+                name      : 'orderDate',
+                labelWidth: 80,
+                labelAlign: 'right', 
+                space     : 0,
+                options   : {
+                    showTime    : true,
+                    format      : "yyyy-MM-dd",                   
+                },
+                width:150,
+                validate : {
+                    required : true
+                }
+            },{
+                display : '<@spring.message "orders.orderMoney"/>',
+                name : "orderCount",
+                type : "text",
+                newline : false,
+                width:150,
+                readonly:true
+                
+            },{
+                display : '<@spring.message "orders.orderStatus"/>',
+                name : "orderStatus",
+                type : 'combobox',
+                options : {
+	                valueField : 'ID',
+	                textField : 'text',
+	                data : [ {
+	                    ID : 'New',
+	                    text : '新建'
+	                }]
+	            },
+                newline : false,
+                width:150
+            }],
+        
+        
+        buttons : [ 
+                    {
+            text : '<@spring.message "orders.orderSave"/>',
+            disabled : false,
+            width : 60,
+            click : function() {
+            	$("#headerId").val(headerId);
+            	if($("#companyId").val() !='' &&
+	  				  $("#customerId").val()!=''){
+            		alert('<@spring.message "orders.orderSaveTip1"/>');
+            	}else{
+            		alert('<@spring.message "orders.orderSaveTip2"/>')
+            	}
+            	
+            }
+        },{
+            text : '<@spring.message "orders.orderSubmit"/>',
+            disabled : true,
+            width : 60,
+            click : function() {
+            }
+        }
+        
+        ,{
+            text : '<@spring.message "orders.orderapprove"/>',
+            disabled : true,
+            width : 60,
+            click   : function () {
+            	ordersForm.reset();
+            }
+        },{
+            text : '<@spring.message "orders.orderreject"/>',
+            disabled : true,
+            width : 60,
+            click   : function () {
+            	
+            }
+        },{
+            text : '<@spring.message "orders.deleteall"/>',
+            disabled : true,
+            width : 60,
+            click   : function () {
+            	ordersForm.reset();
+            }
+        }
+        ,{
+            text : '<@spring.message "orders.printbutton"/>',
+            disabled : true,
+            width : 60,
+            click : function() {} 	
+            
+        }
+        ]
+        });
+        
+        
+        
+        
+        
+        
+    
+        mainform.attr("action", "${base.contextPath}/orders/order/insert");
+        
+        
+        
+        
+        
+        
+        
+    
+        codeValueGrid = $("#codeValueGrid").ligerGrid({
+            columns : [{
+            	display : '<@spring.message "orders.lineNumber"/>',
+                name : "lineNumber",
+                width: 150,
+                align: 'center'
+            	},
+            	{
+                display : '<@spring.message "orders.lineId"/>',
+                name : "lineId",
+                width: 150,
+                align: 'center',
+                hide:true
+                },
+                {display : '<@spring.message "orders.companyId"/>',
+                name : "companyId",
+                width: 150,
+                align: 'center',
+                hide:true
+                },{
+                display : '<@spring.message "orders.customerId"/>',
+                name : "customerId",
+                width: 150,
+                align: 'center',
+                hide:true
+                },{
+                display : '<@spring.message "orders.headerId"/>',
+                name : "headerId",
+                width: 150,
+                align: 'center',
+                hide:true
+                },{
+                    display : 'orderQuantityUom',
+                    name : "orderQuantityUom",
+                    width: 150,
+                    align: 'center',
+                    hide:true
+                    }
+                       
+                            
+                                    
+                       ,{
+            	display : '<@spring.message "orders.inventoryItemId"/>',
+                name : 'inventoryItemId',
+                align : 'left',
+                width : 120,
+                textField:'itemCode', 
+                editor : {
+                	type : 'popup',
+                	valueField : 'inventoryItemId',//选中的valueField
+                    textField : 'itemCode',//选中的textField 
+                    
+                    grid : {
+                        columns : [ {
+                            display :'<@spring.message "orders.itemCode"/>',
+                            name : "itemCode",
+                            width : 200,
+                            type : "text",
+                            align : "left"
+                        }, {
+                            display : '<@spring.message "orders.itemDescription"/>',
+                            name : "itemDescription",
+                            width : 300,
+                            type : "text",
+                            align : "left"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/orders/inventory/query'
+                    },
+                    //lov上的查询条件
+                     condition : {
+                        inputWidth : 100,
+                        labelWidth : 150,
+                        fields : [ {
+                        	display : '<@spring.message "orders.itemCode"/>',
+                            name : "itemCode",
+                            newline : true,
+                            type : "text"
+                        }, {
+                        	display :  '<@spring.message "orders.itemDescription"/>',
+                            name : "itemDescription",
+                            newline : true,
+                            type : "text"
+                        } ]
+                    }
+                    
+                },
+                validate: {
+                    required: true
+                }
+            },{
+            	display : '<@spring.message "orders.itemDescription"/>',
+                name : "itemDescription",
+                width: 150,
+                align: 'left'
+            },{
+            	display : '<@spring.message "orders.itemCompaney"/>',
+                name : "itemUOM",
+                width: 150,
+                align: 'left'
+            },{
+            	display : '<@spring.message "orders.orderQuantity"/>',
+                name : "orderQuantity",
+                width: 150,
+                align: 'left',
+                editor : {
+                    type : 'text', 
+                },
+                validate: {
+                    required: true
+                }
+            },{
+            	display : '<@spring.message "orders.unitSellingPricae"/>',
+                name : "unitSellingPricae",
+                width: 150,
+                align: 'left',
+                editor : {
+                    type : 'text', 
+                },
+                validate: {
+                    required: true
+                }
+            },{
+            	display : '<@spring.message "orders.orderMoney"/>',
+                name : "Price",
+                width: 150,
+                align: 'left',
+                editor : {
+                    type : 'text', 
+                },
+                validate: {
+                    required: true
+                }
+            },{
+            	display : '<@spring.message "orders.description"/>',
+                name : "description",
+                width: 150,
+                align: 'left',
+                editor : {
+                    type : 'text', 
+                }
+            }],
+            showToggleColBtn : false,
+            width : '100%',
+            height : '99%',
+            columnWidth : 100,
+            root: 'rows',
+            record: 'total',
+            usePager : false,
+            mouseoverRowCssClass : null,
+            enabledEdit : true,
+            checkbox : false,
+            <#if isedit == '1'>
+             url: '${base.contextPath}/sys/codevalue/query?codeId=${RequestParameters.codeId!}', 
+            </#if>
+            toolbar : {
+                items : [ {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                    	if($("#companyId").val() !='' &&
+          	  				  $("#customerId").val()!=''){
+                    		numbers++;
+                            codeValueGrid.addRow({lineNumber:numbers,
+                            	  				  companyId:$("#companyId").val(),
+                            	  				  headerId: $("#headerId").val(),
+                            	  				  customerId:$("#customerId").val(),
+                            	  				  orderQuantityUom:'nothing',
+                            	  				  lineId: Date.parse(new Date())
+
+                            	  				                        
+                            
+                            });
+                            codeValueGridTwo.addRow({lineNumber:numbers});
+                            alert('<@spring.message "orders.orderSaveTip4"/>');
+                      		
+                      	}else{
+                      		alert('<@spring.message "orders.orderSaveTip3"/>');
+                      	}
+                    	
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.delete"/>',
+                    click : function() {
+                        Hap.gridDelete({
+                            grid : codeValueGrid,
+                            url : '${base.contextPath}/sys/codevalue/remove'
+                        })
+    
+                    },
+                    icon : 'delete'
+                },{
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.save"/>',
+                    click : function() {
+                        Hap.gridSave({
+                            grid : codeValueGrid,
+                            url : '${base.contextPath}/orders/orderLine/save'
+                        })
+                    },
+                    icon : 'save'
+                }]
+            }
+        });
+        
+        
+        
+        
+        
+        
+        
+        
+        codeValueGridTwo = $("#codeValueGridTwo").ligerGrid({
+            columns : [{
+            	display : '<@spring.message "orders.lineNumber"/>',
+                name : "lineNumber",
+                width: 150,
+                align: 'center'
+            	},
+                {
+            	display : 'Attribute1',
+                name : "itemDescription",
+                width: 150,
+                align: 'left',
+                editor : {
+                    type : 'text', 
+                },
+                validate: {
+                    required: true
+                }
+            },{
+            	display : 'Attribute12',
+                name : "itemDescription",
+                width: 150,
+                align: 'left',
+                editor : {
+                    type : 'text', 
+                },
+                validate: {
+                    required: true
+                }
+            },{
+            	display : 'Attribute13',
+                name : "itemDescription",
+                width: 150,
+                align: 'left',
+                editor : {
+                    type : 'text', 
+                }
+            }],
+            showToggleColBtn : false,
+            width : '100%',
+            height : '99%',
+            columnWidth : 100,
+            root: 'rows',
+            record: 'total',
+            usePager : false,
+            mouseoverRowCssClass : null,
+            enabledEdit : true,
+            //checkbox : true,
+            
+           
+        });
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <#if isedit == '1'>
+        Hap.loadForm({form:form,url:'${base.contextPath}/sys/code/query',para:{codeId:${RequestParameters.codeId}}})
+       </#if>
+    </script>
+</body>
+</html>

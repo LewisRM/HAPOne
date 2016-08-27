@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hcm.core.orders.mapper.OrderLineMapper">
+
+<insert id="insertOrderLine" parameterType="hcm.core.orders.dto.OrderLine" >
+<!--     <selectKey resultType="Long" keyProperty="fruitId"
+        order="BEFORE">
+  		select _nextval('Fruit_ID') from dual
+    </selectKey> -->
+    INSERT INTO hap_om_order_lines
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="lineId != null" >
+        LINE_ID,
+      </if>
+      <if test="headerId != null" >
+        HEADER_ID,
+      </if>
+      <if test="lineNumber != null" >
+        LINE_NUMBER,
+      </if>
+      <if test="inventoryItemId != null" >
+        INVENTORY_ITEM_ID,
+      </if>
+      <if test="orderQuantity != null" >
+        ORDERD_QUANTITY,
+      </if>
+      <if test="unitSellingPricae != null" >
+        UNIT_SELLING_PRICE,
+      </if>
+      <if test="orderQuantityUom != null" >
+        ORDER_QUANTITY_UOM,
+      </if>
+      <if test="description != null" >
+        DESCRIPTION,
+      </if>
+       <if test="companyId != null" >
+        COMPANY_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      
+      <if test="lineId != null" >
+        #{lineId,jdbcType=DECIMAL},
+      </if>
+      <if test="headerId != null" >
+        #{headerId,jdbcType=DECIMAL},
+      </if>
+      <if test="lineNumber != null" >
+        #{lineNumber,jdbcType=DECIMAL},
+      </if>
+      <if test="inventoryItemId != null" >
+        #{inventoryItemId,jdbcType=DECIMAL},
+      </if>
+      <if test="orderQuantity != null" >
+        #{orderQuantity,jdbcType=DECIMAL},
+      </if>
+      <if test="unitSellingPricae != null" >
+        #{unitSellingPricae,jdbcType=DECIMAL},
+      </if>
+      <if test="orderQuantityUom != null" >
+        #{orderQuantityUom,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+       <if test="companyId != null" >
+         #{companyId,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+
+
+</mapper>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hcm.core.orders.mapper.OrderMapper">
+    <resultMap id="BaseResultMap" type="hcm.core.orders.dto.Order">
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR"/>
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR"/>
+        <result column="ORDER_DATE" property="orderDate" jdbcType="DATE"/>
+        <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR"/>
+        <result column="ORDERD_QUANTITY" property="orderQuantity" jdbcType="DECIMAL"/>
+        <result column="UNIT_SELLING_PRICE" property="unitSellingPricae" jdbcType="DECIMAL"/>
+        <result column="Money" property="orderMoney" jdbcType="DECIMAL"/>
+    </resultMap>
+	
+	<select id="selectAllOrders" parameterType="hcm.core.orders.dto.Order" resultMap="BaseResultMap">
+			select ORDER_NUMBER,COMPANY_NAME,CUSTOMER_NAME,ORDER_DATE,ORDER_STATUS,ORDERD_QUANTITY*UNIT_SELLING_PRICE as Money from 
+			     hap_om_order_lines ol,
+			     hap_om_order_headers oh,
+			     hap_org_companys oc,
+			     hap_ar_customers ac
+			<where>
+			ol.HEADER_ID=oh.HEADER_ID  and oh.COMPANY_ID=oc.COMPANY_ID
+			and ac.CUSTOMER_ID=oh.CUSTOMER_ID
+        	<if test="companyId!= null">
+                and oh.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
+            </if>
+            <if test="customerId!= null">
+                and oh.CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
+            </if>
+            <if test="orderNumber!= null">
+                and oh.ORDER_NUMBER = #{orderNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="inventoryItemId!= null">
+                and ol.INVENTORY_ITEM_ID = #{inventoryItemId,jdbcType=DECIMAL}
+            </if>
+            <if test="orderStatus!= null">
+                and oh.ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR}
+            </if>
+            </where>
+    </select>
+    
+    
+    
+    
+    
+    
+    <insert id="insertOrderHeader" parameterType="hcm.core.orders.dto.OrderHeader" >
+    INSERT INTO hap_om_order_headers
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="headerId != null" >
+        HEADER_ID,
+      </if>
+      <if test="orderNumber != null" >
+        ORDER_NUMBER,
+      </if>
+      <if test="companyId != null" >
+        COMPANY_ID,
+      </if>
+      <if test="customerId != null" >
+        CUSTOMER_ID,
+      </if>
+      <if test="orderDate != null" >
+        ORDER_DATE,
+      </if>
+      <if test="orderStatus != null" >
+        ORDER_STATUS,
+      </if>
+
+    </trim>
+    
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      
+      <if test="headerId != null" >
+        #{headerId,jdbcType=DECIMAL},
+      </if>
+      <if test="orderNumber != null" >
+        #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=DECIMAL},
+      </if>
+      <if test="customerId != null" >
+        #{customerId,jdbcType=DECIMAL},
+      </if>
+      <if test="orderDate != null" >
+        #{orderDate,jdbcType=DATE},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+   
+</mapper>
